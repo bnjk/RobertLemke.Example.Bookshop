@@ -20,4 +20,11 @@
     '@action':     'index'
     '@format':     'html'
 
-
+-
+  name: 'Other actions'
+  uriPattern: '{@controller}(/{@action})'
+  defaults:
+    '@package':    'RobertLemke.Example.Bookshop'
+    '@action':     'index'
+    '@format':     'html'
+  appendExceedingArguments: true
