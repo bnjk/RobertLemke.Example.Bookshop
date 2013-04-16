@@ -28,7 +28,7 @@ class IsbnLookupService {
 	 */
 	public function getBookInfo($isbn) {
 		$this->browser->setRequestEngine(new CurlEngine());
-		$response = $this->browser->request('http://isbndb.com/api/books.xml?access_key=CCFEHU64&index1=isbn&value1=' . $isbn);
+		$response = $this->browser->request(sprintf('http://isbndb.com/api/books.xml?access_key=CCFEHU64&index1=isbn&results=texts&value1=%s', $isbn));
 		$xml = simplexml_load_string($response->getContent());
 
 		$bookData = $xml->xpath('//BookData');
@@ -36,7 +36,8 @@ class IsbnLookupService {
 			$bookInfo = array(
 				'title' => (string)$bookData[0]->Title,
 				'publisher' => (string)$bookData[0]->PublisherText,
-				'authors' => (string)$bookData[0]->AuthorsText
+				'authors' => (string)$bookData[0]->AuthorsText,
+				'description' => (string)$bookData[0]->Summary
 			);
 		} else {
 			$bookInfo = array();

@@ -13,8 +13,6 @@ use \RobertLemke\Example\Bookshop\Domain\Model\Category;
 
 /**
  * Category controller for the RobertLemke.Example.Bookshop package
- *
- * @Flow\Scope("singleton")
  */
 class CategoryController extends ActionController {
 

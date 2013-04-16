@@ -8,23 +8,15 @@ namespace RobertLemke\Example\Bookshop\Controller;
 
 use RobertLemke\Example\Bookshop\Domain\Model\Category;
 use TYPO3\Flow\Annotations as Flow;
-
+use TYPO3\Flow\Error\Message;
 use TYPO3\Flow\Mvc\Controller\ActionController;
 use \RobertLemke\Example\Bookshop\Domain\Model\Book;
 use TYPO3\Fluid\View\AbstractTemplateView;
 
 /**
  * Book controller for the RobertLemke.Example.Bookshop package
- *
- * @Flow\Scope("singleton")
  */
 class BookController extends ActionController {
-
-	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Cache\Frontend\StringFrontend
-	 */
-	protected $htmlCache;
 
 	/**
 	 * @Flow\Inject
@@ -68,18 +60,12 @@ class BookController extends ActionController {
 	 * @return void
 	 */
 	public function indexAction(Category $category = NULL) {
-		$output = $this->htmlCache->get('BookController_index');
-		if ($output === FALSE) {
-			if ($category !== NULL) {
-				$books = $this->bookRepository->findByCategory($category);
-			} else {
-				$books = $this->bookRepository->findAll();
-			}
-			$this->view->assign('books', $books);
-			$output = $this->view->render();
-#			$this->htmlCache->set('BookController_index', $output);
+		if ($category !== NULL) {
+			$books = $this->bookRepository->findByCategory($category);
+		} else {
+			$books = $this->bookRepository->findAll();
 		}
-		return $output;
+		$this->view->assign('books', $books);
 	}
 
 	/**
@@ -121,17 +107,16 @@ class BookController extends ActionController {
 	public function createIsbnAction(array $newBook) {
 		$bookInfo = $this->isbnLookupService->getBookInfo($newBook['isbn']);
 		if ($bookInfo === array()) {
-			$this->addFlashMessage(sprintf('No book found with ISBN %s.', $newBook['isbn']));
-		} else {
-			$book = new Book();
-			$book->setTitle($bookInfo['title']);
-			$book->setDescription('Automatically imported');
-			$book->setIsbn($newBook['isbn']);
-			$book->setPrice(16);
-			$this->bookRepository->add($book);
-			$this->addFlashMessage('Created a new book.');
+			$this->addFlashMessage('No book found with ISBN %s.', 'Invalid ISBN', Message::SEVERITY_ERROR, array($newBook['isbn']));
+			$this->redirect('index');
 		}
-		$this->redirect('index');
+		$book = new Book();
+		$book->setTitle($bookInfo['title']);
+		$book->setDescription($bookInfo['description']);
+		$book->setIsbn($newBook['isbn']);
+		$book->setPrice(16);
+		$this->bookRepository->add($book);
+		$this->addFlashMessage('Created a new book.');
 	}
 
 	/**

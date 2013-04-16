@@ -10,8 +10,6 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Basket controller for the RobertLemke.Example.Bookshop package
- *
- * @Flow\Scope("singleton")
  */
 class BasketController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 
@@ -22,7 +20,7 @@ class BasketController extends \TYPO3\Flow\Mvc\Controller\ActionController {
 	protected $basket;
 
 	/**
-	 *
+	 * Displays the basket
 	 */
 	public function indexAction() {
 		$this->view->assign('basket', $this->basket);
