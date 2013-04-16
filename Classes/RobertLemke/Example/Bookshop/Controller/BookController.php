@@ -117,6 +117,7 @@ class BookController extends ActionController {
 		$book->setPrice(16);
 		$this->bookRepository->add($book);
 		$this->addFlashMessage('Created a new book.');
+		$this->redirect('index');
 	}
 
 	/**
